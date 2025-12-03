@@ -74,8 +74,9 @@ while k < kmax && gradfk_norm >= tolgrad
     % following system with pcg method in order to find the 
     % descent direction.
      
-    pk = pcg(Bk, -gradfk, [], [], R, R');
-
+    %pk = pcg(Bk, -gradfk, [], [], R, R');
+    pk = R\(R'\(-gradfk));
+    
     % NOTE: there's no need to check if pk is a descent direction because
     % of remark2 
     
@@ -104,9 +105,13 @@ while k < kmax && gradfk_norm >= tolgrad
         % Increase the counter by one
         bt = bt + 1;
     end
+
+    % Check if the maximum number of backtracking iterations is reached
     if bt == btmax && fnew > farmijo(fk, alpha, c1_gradfk_pk)
-        break
+        disp('Maximum backtracking iterations reached, stopping.');
+        break;
     end
+
     % ...to here
     
     % Update xk, fk, gradfk_norm
@@ -135,3 +140,24 @@ xseq = [x0, xseq];
 
 
 end
+
+
+% TO DO:
+
+%BACKTRACKING
+%
+% rho dalla teoria del backtracking sappiamo che può essere fisso o chosen
+% by interpolation rho \in [\rho_l, \rho_u]
+%
+% Controllare quale valore alpha soddisfa armijo perché se alpha <<1
+% abbiamo stagnation
+%
+% ATTENZIONE: Non fare l'errore di permettere che alpha sia < eps, bisogna
+% stare attenti a scegliere un rho e btmax che non permetta alpha<eps,
+% NEPPURE TEORICAMENTE, cioè quando fissiamo i parametri cerchiamo delle
+% condizioni che le legano... rho = 0.5 e btmax  = 50 è un errore
+% GRAVESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+% anche btmax = 30 nonè giusto perché vado lento
+% con 50 backtracking e rho = 0.5 raggiungiamo eps... sbagliato
+%
+% AGGIUNGERE CONDIZIone di curvatura

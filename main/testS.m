@@ -2,6 +2,9 @@ clc
 close all
 clear
 
+addpath(genpath('functions'));
+addpath(genpath('test'));
+
 load test_functions2.mat
 
 beta = 1e-3;
